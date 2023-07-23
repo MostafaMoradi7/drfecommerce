@@ -1,7 +1,7 @@
-from pathlib import Path
-from dotenv import load_dotenv
 import os
+from pathlib import Path
 
+from dotenv import load_dotenv
 
 load_dotenv()
 
@@ -23,7 +23,9 @@ INSTALLED_APPS = [
     "django.contrib.staticfiles",
     # Externals
     "rest_framework",
+    "drf_spectacular",
     # Internals
+    "config.product",
 ]
 
 
@@ -93,4 +95,11 @@ STATIC_URL = "static/"
 DEFAULT_AUTO_FIELD = "django.db.models.BigAutoField"
 
 
-REST_FRAMEWORK = {}
+REST_FRAMEWORK = {"DEFAULT_SCHEMA_CLASS": "drf_spectacular.openapi.AutoSchema",}
+
+SPECTACULAR_SETTINGS = {
+    'TITLE': 'DJANGO DRF ECOMMERCE',
+    'DESCRIPTION': 'DJANGO DRF ECOMMERCE',
+    'VERSION': '1.0.0',
+    'SERVE_INCLUDE_SCHEMA': False,
+}
