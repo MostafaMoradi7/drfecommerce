@@ -3,7 +3,7 @@ from django.core.exceptions import ObjectDoesNotExist
 from django.db import models
 
 
-class OderField(models.PositiveIntegerField):
+class OrderField(models.PositiveIntegerField):
     description = "Ordering Field on a unique field"
 
     def __init__(self, unique_for_field=None, *args, **kwargs):

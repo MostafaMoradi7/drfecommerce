@@ -2,7 +2,7 @@ from django.core.exceptions import ValidationError
 from django.db import models
 from mptt.models import MPTTModel, TreeForeignKey
 
-from .fields import OderField
+from .fields import OrderField
 
 # class ActiveManager(models.Manager):
 # def get_queryset(self):
@@ -71,7 +71,7 @@ class ProductLine(models.Model):
     is_active = models.BooleanField(default=False)
     order = models.PositiveIntegerField()
     objects = ActiveQuerySet.as_manager()
-    order = OderField(unique_for_field="product", blank=True)
+    order = OrderField(unique_for_field="product", blank=True)
 
     def clean(self, exclude=None):
         qs = ProductLine.objects.filter(product=self.product)
@@ -85,3 +85,26 @@ class ProductLine(models.Model):
 
     def __str__(self):
         return str(self.sku)
+
+
+class ProductImage(models.Model):
+    # name = models.CharField(max_length=100)
+    alternative_text = models.CharField(max_length=100)
+    url = models.ImageField(upload_to=None, default="test.jpg")
+    productline = models.ForeignKey(
+        ProductLine, on_delete=models.CASCADE, related_name="product_image"
+    )
+    order = OrderField(unique_for_field="productline", blank=True)
+
+    def clean(self, exclude=None):
+        qs = ProductImage.objects.filter(productline=self.productline)
+        for obj in qs:
+            if self.id != obj.id and self.order == obj.order:
+                raise ValidationError("Duplicate Value.")
+
+    def save(self, *args, **kwargs):
+        self.full_clean()
+        return super(ProductImage, self).save(*args, **kwargs)
+
+    def __str__(self):
+        return str(self.order)
